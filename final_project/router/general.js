@@ -64,20 +64,27 @@ public_users.get("/isbn/:isbn", (req, res) => {
     });
 });
 
-module.exports = public_users;
+// Route pour obtenir les détails d’un livre par auteur (Promesse)
+public_users.get("/author/:author", (req, res) => {
+  const author = req.params.author.toLowerCase();
 
-  
-// Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  const author = req.params.author;
-  const filterBooksAuthor = Object.values(books).filter((book) => book.author === author);
-  if (filterBooksAuthor.length >0) {
-    return res.status(200).json(filterBooksAuthor);
-  }else {
-    return res.status(404).json({message: "Book not found"});
-  }
-  return res.status(300).json({message: "Yet to be implemented"});
+  // Simuler un appel asynchrone avec Axios (ici on appelle notre propre API /)
+  axios.get("http://localhost:5000/")
+    .then(response => {
+      const allBooks = response.data;
+      // Filtrer les livres par auteur
+      const filteredBooks = Object.values(allBooks).filter(
+        b => b.author.toLowerCase() === author
+      );
+      if (filteredBooks.length > 0) {
+        res.json(filteredBooks);
+      } else {
+        res.status(404).json({ message: "No books found for this author" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: "Erreur lors de la récupération", error: error.message });
+    });
 });
 
 // Get all books based on title

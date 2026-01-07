@@ -87,17 +87,27 @@ public_users.get("/author/:author", (req, res) => {
     });
 });
 
-// Get all books based on title
-public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  const title = req.params.title;
-  const filterBooksTitle = Object.values(books).filter((book) => book.title === title);
-  if (filterBooksTitle.length >0) {
-    return res.status(200).json(filterBooksTitle);
-  }else {
-    return res.status(404).json({message: "Book not found"});
-  }
-  return res.status(300).json({message: "Yet to be implemented"});
+// Route pour obtenir les détails d’un livre par titre (Promesse)
+public_users.get("/title/:title", (req, res) => {
+  const title = req.params.title.toLowerCase();
+
+  // Simuler un appel asynchrone avec Axios (ici on appelle notre propre API /)
+  axios.get("http://localhost:5000/")
+    .then(response => {
+      const allBooks = response.data;
+      // Chercher le livre par titre
+      const book = Object.values(allBooks).find(
+        b => b.title.toLowerCase() === title
+      );
+      if (book) {
+        res.json(book);
+      } else {
+        res.status(404).json({ message: "Book not found" });
+      }
+    })
+    .catch(error => {
+      res.status(500).json({ message: "Erreur lors de la récupération", error: error.message });
+    });
 });
 
 //  Get book review
